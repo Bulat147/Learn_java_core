@@ -1,6 +1,9 @@
 package collections;
 
-public class MyArray{
+import java.util.Iterator;
+
+// Чтоб сделать итерацию по коллекции, нужно в ней реализовать интерфейс Iterable
+public class MyArray implements Iterable<String>{
     private String[] array;
     private int size = 0;
 
@@ -16,7 +19,31 @@ public class MyArray{
         this.array = new String[capacity];
     }
 
-    // Реализуем for each
+    // Реализуем for each или итерацию
+    @Override
+    public Iterator<String> iterator() {
+        // А для этого всего лишь нужно реализовать этот метод, который возвращает итератор
+        return new IteratorForMyArray();
+    }
+    // И обязательно мы создаем вложенный класс итератора, в котором реализуем hasNext() и next().
+    // Этот класс обязательно реализует интерфейс Iterator с каким-нибудь дженериком.
+    private class IteratorForMyArray implements Iterator<String>{
+        private int count = -1;
+
+        @Override
+        public boolean hasNext() {
+            if (count+1 == size){
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public String next() {
+            count++;
+            return array[count];
+        }
+    }
 
     public void add(String element){
         array[size] = element;
@@ -71,6 +98,16 @@ class Testing1{
         System.out.println(array1.getSize()); // 3
         array1.remove("Max");
         System.out.println(array1.getSize()); // 2
+        array1.add("Musa");
+        array1.add("Pavel");
+        // Проверяем работает ли наш итератор
+        for (String element: array1){
+            System.out.println(element); // Работает!
+        }
+        // Работает ли он повторно?
+        for (String element: array1){
+            System.out.println(element); // Работает!
+        }
 
         // Хочу посмотреть что там в пустой ячейке встроенного массива
         String[] testEmptyIndex = new String[3];
